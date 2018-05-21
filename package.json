@@ -1,0 +1,39 @@
+{
+  "name": "check.js",
+  "version": "0.1.0",
+  "description": "Javascript error checking library",
+  "main": "check.js",
+  "scripts": {
+    "watch": "NODE_ENV=production webpack --watch --config config/webpack.config.js",
+    "build": "webpack --config config/webpack.config.js",
+    "build:dev": "cross-env NODE_ENV=development webpack --config config/webpack.config.js",
+    "test": "jest --coverage",
+    "test:watch": "jest --watch"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://B-Core@bitbucket.org/B-Core/check.git"
+  },
+  "keywords": [
+    "javascript",
+    "error"
+  ],
+  "sideEffects": false,
+  "author": "Ciro DE CARO",
+  "license": "Apache-2.0",
+  "homepage": "https://bitbucket.org/B-Core/check#readme",
+  "devDependencies": {
+    "babel-core": "^6.26.3",
+    "babel-loader": "^7.1.4",
+    "babel-preset-env": "^1.7.0",
+    "babel-register": "^6.26.0",
+    "clean-webpack-plugin": "^0.1.19",
+    "cross-env": "^5.1.5",
+    "jest": "^22.4.4",
+    "webpack": "^4.8.3",
+    "webpack-cli": "^2.1.3"
+  },
+  "dependencies": {
+    "lodash": "^4.17.10"
+  }
+}
