@@ -1,10 +1,9 @@
 import difference from './utils/difference';
-const numberRegExp = new RegExp(/^(\d+[<>]{0,2}\d+)|([<>]{0,2}\d+)$/, 'g');
 
-const nRegEx = new RegExp(/([\-\+]{0,1}\d+)|([\-\+]{0,1}\d+\.\d+)/, 'g');
-const maxRegEx = new RegExp(/^>\d+$/, 'g');
-const minRegEx = new RegExp(/^<\d+$/, 'g');
-const rangeRegEx = new RegExp(/^\d+<>\d+$/, 'g');
+const nRegEx = new RegExp(/[\-\+]{0,1}\d+(\.\d+)?/, 'g');
+const maxRegEx = new RegExp(/^>\d+(\.\d+)?$/);
+const minRegEx = new RegExp(/^<\d+(\.\d+)?$/);
+const rangeRegEx = new RegExp(/^\d+(\.\d+)?<>\d+(\.\d+)?$/);
 
 export default ({
   validate(input, schema) {
@@ -25,10 +24,12 @@ export default ({
     return null;
   },
   check(input, source) {
-    if (source instanceof Function) this.checkType(input, source);
-    if (numberRegExp.test(source) || this.getType(source) === 'Number') {
+    if (source instanceof Function) return this.checkType(input, source);
+    const numberTest = (maxRegEx.test(source) || minRegEx.test(source) || rangeRegEx.test(source)) || this.getType(source) === 'Number';
+    const stringTest = typeof source === 'string' || source instanceof RegExp || this.getType(source) === 'String';
+    if (numberTest) {
       return this.checkNumber(input, source);
-    } else if (typeof source === 'string' || source instanceof RegExp) {
+    } else if (stringTest) {
       return this.checkString(input, source);
     }
   },
@@ -61,18 +62,21 @@ export default ({
     }
   },
   checkNumber(input, source) {
-    if (rangeRegEx.test(source)) {
+    const minTest = minRegEx.test(source);
+    const maxTest = maxRegEx.test(source);
+    const rangeTest = rangeRegEx.test(source);
+
+    if (rangeTest && !minTest && !maxTest) {
       const matchMin = source.match(nRegEx)[0]
       const min = parseFloat(matchMin);
       const matchMax = source.match(nRegEx)[1];
       const max = parseFloat(matchMax);
-      console.log(input, min, max);
       return this.logError({
         input,
         source,
         valid: input < max && input > min,
       });
-    } else if (maxRegEx.test(source)) {
+    } else if (maxTest && !minTest && !rangeTest) {
       const match = source.match(nRegEx)[0];
       const n = parseFloat(match);
       return this.logError({
@@ -80,7 +84,7 @@ export default ({
         source,
         valid: input > n,
       });
-    } else if (minRegEx.test(source)) {
+    } else if (minTest && !rangeTest && !maxTest) {
       const match = source.match(nRegEx)[0];
       const n = parseFloat(match);
       return this.logError({
@@ -95,9 +99,8 @@ export default ({
     const message = `ValidationError: ${error.input} type:${typeof error.input} must respect ${error.source} type:${typeof error.source}`;
     if (!error.valid) {
       throw new TypeError(error.message || message);
-    } else {
-      return null;
     }
+    return null;
   },
   getType(source) {
     return source.name || typeof source;

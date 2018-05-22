@@ -171,37 +171,37 @@ describe('check -> string:', () => {
 describe('check -> number', () => {
   test('validate number with regEx max', () => {
     expect(check.validate({ age: 11 }, numberSupSchema)).toBeNull();
-    expect(() => check.validate({ age: -11 }, numberSupSchema)).toThrowError(/must respect >10/);
     expect(check.validate({ age: 11 }, numberSupSchema)).toBeNull();
+    expect(() => check.validate({ age: -11 }, numberSupSchema)).toThrowError(/must respect >10/);
     expect(() => check.validate({ age: 10 }, numberSupSchema)).toThrowError(/must respect >10/);
   });
   test('validate number with regEx max', () => {
     expect(check.validate({ age: 9 }, numberMinSchema)).toBeNull();
-    expect(() => check.validate({ age: 10 }, numberMinSchema)).toThrowError(/must respect <10/);
     expect(check.validate({ age: -9 }, numberMinSchema)).toBeNull();
+    expect(() => check.validate({ age: 10 }, numberMinSchema)).toThrowError(/must respect <10/);
   });
   test('validate number with regEx range', () => {
     expect(check.validate({ age: 50 }, numberRangeSchema)).toBeNull();
-    expect(() => check.validate({ age: 10 }, numberRangeSchema)).toThrowError(/must respect 10<>100/);
     expect(check.validate({ age: 11 }, numberRangeSchema)).toBeNull();
+    expect(() => check.validate({ age: 10 }, numberRangeSchema)).toThrowError(/must respect 10<>100/);
     expect(() => check.validate({ age: 100 }, numberRangeSchema)).toThrowError(/must respect 10<>100/);
   });
 
   test('validate number float with regEx max', () => {
     expect(check.validate({ age: 10.16 }, numberFloatSupSchema)).toBeNull();
-    expect(() => check.validate({ age: -11 }, numberFloatSupSchema)).toThrowError(/must respect >10/);
     expect(check.validate({ age: 10.16 }, numberFloatSupSchema)).toBeNull();
+    expect(() => check.validate({ age: -11 }, numberFloatSupSchema)).toThrowError(/must respect >10/);
     expect(() => check.validate({ age: 10.14 }, numberFloatSupSchema)).toThrowError(/must respect >10/);
   });
   test('validate number float with regEx min', () => {
     expect(check.validate({ age: 10.14 }, numberFloatMinSchema)).toBeNull();
-    expect(() => check.validate({ age: 10.15 }, numberFloatMinSchema)).toThrowError(/must respect <10/);
     expect(check.validate({ age: -9 }, numberFloatMinSchema)).toBeNull();
+    expect(() => check.validate({ age: 10.15 }, numberFloatMinSchema)).toThrowError(/must respect <10/);
   });
-  test.only('validate number float with regEx range', () => {
-    expect(check.validate({ age: 10.5 }, numberFloatRangeSchema)).toBeNull();
-    // expect(() => check.validate({ age: 10.2 }, numberFloatRangeSchema)).toThrowError(/must respect 10.4<>10.7/);
-    expect(check.validate({ age: 10.6 }, numberFloatRangeSchema)).toBeNull();
-    // expect(() => check.validate({ age: 10.7 }, numberFloatRangeSchema)).toThrowError(/must respect 10.4<>10.7/);
+  test('validate number float with regEx range', () => {
+    expect(() => check.validate({ age: 10.5 }, numberFloatRangeSchema)).not.toThrow();
+    expect(() => check.validate({ age: 10.6 }, numberFloatRangeSchema)).not.toThrow();
+    expect(() => check.validate({ age: 10.2 }, numberFloatRangeSchema)).toThrowError('must respect 10.4<>10.7');
+    expect(() => check.validate({ age: 10.7 }, numberFloatRangeSchema)).toThrowError('must respect 10.4<>10.7');
   });
 })
