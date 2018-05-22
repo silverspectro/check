@@ -1,0 +1,22 @@
+# This is a sample build configuration for JavaScript.
+# Check our guides at https://confluence.atlassian.com/x/14UWN for more examples.
+# Only use spaces to indent your .yml configuration.
+# -----
+# You can specify a custom docker image from Docker Hub as your build environment.
+image: node:10.1.0
+
+definitions:
+          caches:
+            npm: ~/.npm
+
+pipelines:
+  default:
+    - step:
+        caches:
+          - npm
+          - node
+        script:
+          - git submodule init
+          - git submodule update
+          - npm install
+          - npm test
