@@ -6,7 +6,7 @@ const minRegEx = new RegExp(/^<\d+(\.\d+)?$/);
 const rangeRegEx = new RegExp(/^\d+(\.\d+)?<>\d+(\.\d+)?$/);
 
 export default ({
-  validate(input, schema) {
+  validate(input, schema, strict = false) {
     const keys = Object.keys(schema);
     const notVarKeys = keys.filter(k => !k.includes('?'));
     const inputKeys = Object.keys(input);
@@ -19,7 +19,11 @@ export default ({
       message: `ValidationError: ${JSON.stringify(input)} missing keys [${keyDifference}]`
     });
 
-    notVarKeys.forEach(key => this.check(input[key], schema[key]));
+    inputKeys.forEach(key => {
+      const source = (schema[key] || schema[`?${key}`]);
+      if (source) this.check(input[key], source);
+      else if (!source && strict) return this.checkArray(inputKeys, keys);
+    });
 
     return null;
   },
@@ -27,11 +31,19 @@ export default ({
     if (source instanceof Function) return this.checkType(input, source);
     const numberTest = (maxRegEx.test(source) || minRegEx.test(source) || rangeRegEx.test(source)) || this.getType(source) === 'Number';
     const stringTest = typeof source === 'string' || source instanceof RegExp || this.getType(source) === 'String';
+    const arrayTest = source instanceof Array;
+    const objectTest = this.getType(source) === 'Object';
+
     if (numberTest) {
       return this.checkNumber(input, source);
     } else if (stringTest) {
       return this.checkString(input, source);
+    } else if (arrayTest) {
+      return this.checkArray(input, source);
+    } else if (!objectTest) {
+      return this.checkObject(input, source);
     }
+
   },
   checkType(input, source) {
     const t = input ? `${(this.getType(source)[0]).toLowerCase()}${this.getType(source).slice(1)}` : true;
@@ -93,7 +105,17 @@ export default ({
         valid: input < n,
       });
     }
-    return null;
+  },
+  checkArray(input, source) {
+    const diffs = difference(source, input);
+    return this.logError({
+      input: JSON.stringify(input),
+      source: JSON.stringify(source),
+      valid: diffs.length === 0,
+    });
+  },
+  checkObject(input, source) {
+    return this.validate(input, source);
   },
   logError(error) {
     const message = `ValidationError: ${error.input} type:${typeof error.input} must respect ${error.source} type:${typeof error.source}`;
