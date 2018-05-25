@@ -1,0 +1,14 @@
+{
+  "testPathIgnorePatterns": [
+    "/node_modules/",
+    "/utils/"
+  ],
+  "coveragePathIgnorePatterns": [
+    "/node_modules/",
+    "/utils/"
+  ],
+  "rootDir": "../",
+  "coverageDirectory": "coverage",
+  "verbose": true,
+  "bail": true
+}

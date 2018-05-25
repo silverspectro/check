@@ -7,8 +7,8 @@
     "watch": "NODE_ENV=production webpack --watch --config config/webpack.config.js",
     "build": "webpack --config config/webpack.config.js",
     "build:dev": "cross-env NODE_ENV=development webpack --config config/webpack.config.js",
-    "test": "jest --coverage",
-    "test:watch": "jest --watch"
+    "test": "jest --config config/jest.config.json --coverage",
+    "test:watch": "jest --config config/jest.config.json --watch"
   },
   "repository": {
     "type": "git",
@@ -26,6 +26,7 @@
     "babel-core": "^6.26.3",
     "babel-loader": "^7.1.4",
     "babel-preset-env": "^1.7.0",
+    "babel-preset-stage-0": "^6.24.1",
     "babel-register": "^6.26.0",
     "clean-webpack-plugin": "^0.1.19",
     "cross-env": "^5.1.5",

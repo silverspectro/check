@@ -1,4 +1,4 @@
-import difference from './utils/difference';
+import { difference } from './utils/src/array/difference';
 
 const nRegEx = new RegExp(/[\-\+]{0,1}\d+(\.\d+)?/, 'g');
 const maxRegEx = new RegExp(/^>\d+(\.\d+)?$/);

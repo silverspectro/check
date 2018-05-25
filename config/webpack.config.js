@@ -15,12 +15,6 @@ module.exports = {
   plugins: [
     new CleanWebpackPlugin([PATHS.DIST]),
   ],
-  resolve: {
-    alias: {
-      Schemas: PATHS.SCHEMAS,
-      Lib: PATHS.LIBS,
-    },
-  },
   module: {
     rules: [
       { test: /\.js$/, exclude: /node_modules/, loader: "babel-loader" }
