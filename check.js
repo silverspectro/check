@@ -77,7 +77,6 @@ export default ({
     const minTest = minRegEx.test(source);
     const maxTest = maxRegEx.test(source);
     const rangeTest = rangeRegEx.test(source);
-
     if (rangeTest && !minTest && !maxTest) {
       const matchMin = source.match(nRegEx)[0]
       const min = parseFloat(matchMin);
@@ -102,9 +101,10 @@ export default ({
       return this.logError({
         input,
         source,
-        valid: input < n,
+        valid: input !== '' && typeof input !== 'undefined' && input !== null && input < n,
       });
     }
+    return null;
   },
   checkArray(input, source) {
     const diffs = difference(source, input);

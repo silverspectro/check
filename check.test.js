@@ -393,7 +393,7 @@ describe('check -> schema definition:', () => {
   });
 });
 
-describe('check -> string:', () => {
+describe('validate -> string:', () => {
   test('validate a string with type', () => {
     stringWrongTypes.forEach(t => expect(() => check.validate({ name: t }, stringEqualitySchema)).toThrowError(/should be of type/)) 
   });
@@ -414,7 +414,7 @@ describe('check -> string:', () => {
   });
 });
 
-describe('check -> number', () => {
+describe('validate -> number', () => {
   test('validate a number with type', () => {
     numberWrongTypes.forEach(t => expect(() => check.validate({ age: t }, numberEqualitySchema)).toThrowError(/should be of type/)) 
   });
@@ -456,7 +456,7 @@ describe('check -> number', () => {
   });
 });
 
-describe('check -> array', () => {
+describe('validate -> array', () => {
   test('validate an array with type', () => {
     arrayWrongTypes.forEach(t => expect(() => check.validate({ data: t }, arrayEqualitySchema)).toThrowError(/should be of type/));
   });
@@ -470,7 +470,7 @@ describe('check -> array', () => {
   });
 });
 
-describe('check -> object', () => {
+describe('validate -> object', () => {
   test('validate an object with type', () => {
     objectWrongTypes.forEach(t => expect(() => check.validate({ data: t }, objectEqualitySchema)).toThrowError(/should be of type/));
   });
@@ -488,5 +488,78 @@ describe('check -> object', () => {
 
   test('validate an array with diffs: good', () => {
     objectGood.forEach(t => expect(() => check.validate(t, objectSchema)).not.toThrow());
+  });
+});
+
+describe('check validate simple inputs', () => {
+  test('number', () => {
+    const bads = [
+      undefined,
+      null,
+      "10",
+      "",
+    ];
+
+    bads.forEach(bad => expect(() => check.check(bad, Number)).toThrowError());
+    expect(() => check.check(10, Number)).not.toThrow();
+  });
+  test('number superior', () => {
+    const bads = [
+      undefined,
+      null,
+      10,
+      () => { return true },
+      "",
+    ];
+
+    bads.forEach(bad => expect(() => check.check(bad, ">10")).toThrowError());
+    expect(() => check.check(11, ">10")).not.toThrow();
+  });
+  test('number inferior', () => {
+    const bads = [
+      undefined,
+      null,
+      11,
+      () => { return true },
+      "",
+    ];
+
+    bads.forEach(bad => expect(() => check.check(bad, "<10")).toThrowError());
+    expect(() => check.check(9, "<10")).not.toThrow();
+  });
+  test('string', () => {
+    const bads = [
+      undefined,
+      null,
+      10,
+      () => { return true },
+    ];
+
+    bads.forEach(bad => expect(() => check.check(bad, String)).toThrowError());
+    expect(() => check.check("test", String)).not.toThrow();
+  });
+  test('array', () => {
+    const bads = [
+      undefined,
+      null,
+      10,
+      () => { return true },
+      {},
+    ];
+
+    bads.forEach(bad => expect(() => check.check(bad, Array)).toThrowError());
+    expect(() => check.check([], Array)).not.toThrow();
+  });
+  test('object', () => {
+    const bads = [
+      undefined,
+      null,
+      10,
+      () => { return true },
+      [],
+    ];
+
+    bads.forEach(bad => expect(() => check.check(bad, Object)).toThrowError());
+    expect(() => check.check({}, Object)).not.toThrow();
   });
 });
